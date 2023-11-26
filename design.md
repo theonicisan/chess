@@ -5,7 +5,10 @@ The idea is to encapsulate the GAME as a vector matrix where:
   2. Dimension 1: Rank array (8 ranks).
   3. Dimension 2: File array (8 files).
   4. Dimension 3: One-hot-encoded array for the piece occupying the squeare (rank-file combination).  Note every piece is unique so the one-hot-encoded array will have 2 (black or white) * (16 (starting pieces) + 8 (theoretical pawn promotions)) = 48 classes.
-  5. Dimension 4: Feature array (arbitrary - 10) containing binary-one-hot-encoding for:
+
+Feature Vector (seperate from game matrix).
+  1. Dimension 0: Pieces. 
+  2. Dimension 1: Feature array (arbitrary - 10) containing binary-one-hot-encoding for:
      0. Active Indicator (1 if yes, 0 if no) - if a piece is taken, indicator changes from 1 to 0.
      1. First Move Indicator (1 if yes, 0 if no) - upon its first move, the indicator changes from 0 to 1. This is useful for pawn first-moves or castling.
      2. Piece Color (0 if black, 1 if white) - as this cannot change throughout the game, this is informational only.
