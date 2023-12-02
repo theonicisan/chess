@@ -22,4 +22,16 @@ Feature Vector (seperate from game matrix).
      10. Promoted (0 if no, 1 if yes).  Changes from 0 to 1 upon pawn promotion.
 
 Once a GAME is encoded in a vector matrix, a collection of games can be assembled as a higher level vector.
+
+After every move, the chess_game vector of shape (moves, rank(8), file(8), one-hot-encoded piece identifier(32)) will receive another move.
+
+As the chess_game has moves appended, the feature vector will have to be updated.  I am not sure if it is worth "hand crafting" the feature vector or whether I should use a learning algorith to discover and embed features of every move/state of the board.  I am not a fan of teaching algorithms deterministic rules.  Perhaps the features can be split into deterministic features and learnt features.
+
+It seems inevitable that the engine will have to be trained using a learning algorithm.  Some of the algorithms I have looked at seem to use reinforcement learning.  I was hoping to use CNN/RNN/Transformer Model principles where the board-state are treated as "words".  Each state could then be trained to have a feature embedding of deterministic and learned features.  This should assist in recommending a next move (or board-state).
+
+Deterministic features could include:
+1. Per Square
+  1. Whether the piece is threatened or not.
+  2. Whether the piece is "hanging" or not.
+
      
