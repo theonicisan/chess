@@ -11,6 +11,6 @@ As a result, a probabilistic approach to algorithmic chess has been popular.
 This project will aim to:
 1. Recreate existing paradigms of algorithmic chess - but only for research purposes.
 2. Evaluate opportunities for improvement in existing paradigms.
-3. Evaluate laternative paradigms.
+3. Evaluate alternative paradigms.
 
 As this problem has been the subject of significant research and development and is considered a mature and possibly exhausted field, I do not expect to find anything that has not been discovered yet.  This project is largely to stimulate curiosity on the topic.
