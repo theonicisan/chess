@@ -10,7 +10,8 @@ Number of games played: 10,000
 Number of wins for WHITE: 751
 Number of wins for BLACK: 783
 Number of draws: 8,466
-Average Moves: 165.50405040504052Average time per game (sec): 0.4975735057245577
+Average Moves: 165.50405040504052
+Average time per game (sec): 0.4975735057245577
 
 1. From a number of simulations, the wins for black and white remained fairly close to each other.  I initially thought that White would have an advantage as the first-mover, but the simulations did not support this assumption.
 2. The average number of moves per game remained very stable.  Keep in mind that critical states included checkmate, insufficient material, stalemate, repetition as well as the 50 and 75 move rules.
@@ -24,5 +25,6 @@ Seeing as I have very limited infrastructure to train with, I would like to use 
 
 Challenges I am figuring out:
 1. The vector shapes for the neural network.  I was hoping to use a 8x8x32 vector that represents the board and a one-hot-encoded value for every square representing a piece identifier.  This 3x3x32 shape could be the input vector or state (s) as well as the action vector (a).
-2. As I don't have much memory, I need to find a way to persist a large training set.  Seeing as the tree-search will depend on a position already having been visited, I would need to be able to store about 10,000 (games) * 160 (moves) * 2 (half-moves) * 3x3x32 states.
+2. As I don't have much memory, I need to find a way to persist a large training set.  Seeing as the tree-search will depend on a position already having been visited, I would need to be able to store about 10,000 (games) * 160 (moves) * 2 (half-moves) * 3x3x32 states.  It should be rapidly searchable.  Perhaps a Vector database?
+3. I won't implement the full MuZero algorithm.  I completely understand the value of weighting and normalizing but won't need to implement the complexity as I simply want to evidence a statistically meaningful improvement to the random win-rate before quitting the project.  So my Q-function would be a simple re-inforcement using a discount factor of approx. 0,95.
 
