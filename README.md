@@ -10,8 +10,7 @@ Number of games played: 10,000
 Number of wins for WHITE: 751
 Number of wins for BLACK: 783
 Number of draws: 8,466
-Average Moves: 165.50405040504052
-Average time per game (sec): 0.4975735057245577
+Average Moves: 165.50405040504052Average time per game (sec): 0.4975735057245577
 
 1. From a number of simulations, the wins for black and white remained fairly close to each other.  I initially thought that White would have an advantage as the first-mover, but the simulations did not support this assumption.
 2. The average number of moves per game remained very stable.  Keep in mind that critical states included checkmate, insufficient material, stalemate, repetition as well as the 50 and 75 move rules.
