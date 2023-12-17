@@ -5,16 +5,17 @@ It's been about a month since I started this project.  The objective was to bett
 First, some updates.
 I have managed to use the Python chess library as a framwork as it saves me re-inventing the wheel.  I use it to generate legal moves and determine terminal states of the board.
 With a couple of lines of code, I could then put together a Monte Carlo simulation that plays completely random moves from the list of available moves.  Below is an example of a completely random outcome after 10,000 games simulated on my latop (i5 with no GPU).  
+
+Number of games played: 10,000
+Number of wins for WHITE: 751
+Number of wins for BLACK: 783
+Number of draws: 8,466
+Average Moves: 165.50405040504052
+Average time per game (sec): 0.4975735057245577
+
 1. From a number of simulations, the wins for black and white remained fairly close to each other.  I initially thought that White would have an advantage as the first-mover, but the simulations did not support this assumption.
 2. The average number of moves per game remained very stable.  Keep in mind that critical states included checkmate, insufficient material, stalemate, repetition as well as the 50 and 75 move rules.
 3. The number of winning outcomes (checkmate for either black or white) was always around ~15%.
-
-    Number of games played: 10,000
-    Number of wins for WHITE: 751
-    Number of wins for BLACK: 783
-    Number of draws: 8,466
-    Average Moves per Game: 165
-    Average time per game: 0.497sec
 
 Next steps.
 Seeing as I now have a baseline of around 7% for a win if moves are randomly made, all the algorithm has to do is to consistenly improve on 7%.
