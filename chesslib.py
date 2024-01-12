@@ -45,15 +45,22 @@ def play_game(in_board, training=None):
             else:
                 reward = -1  # Black Win
         else:
-            reward = 3      # Draw
+            reward = 3      # Draw, should be 0 but using 3 just to test - to stand out from default 0
         
-        board_array[8][0][8] = reward
+        # I think this is redundant as the reward makes it into the replay buffer.
+        # board_array[8][0][8] = reward
         
-        # Just a test line - this needs to be replaced by code to assign the reward to every board in the replay buffer matrix.
-        replay_buffer[1][8][0][8] = reward
+        # Assign the reward to every board in the replay buffer matrix.
+        replay_buffer[:,8,0,8] = reward
+
+        # And then save the replay buffer.
+        filename = save_buffer(replay_buffer)
+    else:
+        filename = 'None'
+
 
     
-    return board, replay_buffer
+    return board, replay_buffer, filename
 
 def simulate_play(iterations, training=None):
     
@@ -78,7 +85,7 @@ def simulate_play(iterations, training=None):
     start_time = time.time()
 
     for i in range(num_games):
-        out_board, _ = play_game(None, training)
+        out_board, _, _ = play_game(None, training)
         moves += out_board.fullmove_number
         if out_board.is_variant_draw() or out_board.can_claim_draw() or out_board.is_insufficient_material() or out_board.is_stalemate() or out_board.is_seventyfive_moves() or out_board.is_fivefold_repetition() :
             num_draws += 1
@@ -207,3 +214,25 @@ def board_to_array(in_board):
         # Note: board_array[8][0][8] is the replay biuffer reward of -1, 0 or 1.
 
     return board_array
+
+def save_buffer(replay_buffer):
+    import os
+    from os import listdir
+    from os.path import isfile, join
+    import numpy as np
+
+    cwd = os.getcwd()
+    onlyfiles = [f[13:-4] for f in os.listdir(cwd) if 
+    os.path.isfile(os.path.join(cwd, f)) and f[-3:]=='npy']
+
+    indexes_array = np.asarray(onlyfiles)
+
+    file_numbers = indexes_array.astype('int')
+    max_file_index = str(np.max(file_numbers)+1)
+    max_file_index_number = max_file_index.zfill(7)
+    filename = 'replay_buffer' + max_file_index_number
+    np.save(filename, replay_buffer)
+    filename = filename + '.npy'
+
+    
+    return filename
