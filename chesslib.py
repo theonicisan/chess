@@ -136,10 +136,10 @@ def board_to_array(in_board):
         for character in (rank_string):
             # Because f is not always 8, we need a new iterator here to fill the entire rank.
 
+            # This skips empty squares if digits appear in the FEN.
             if character.isdigit():
                 spaces = int(character)
                 for e in range(spaces):
-                    #print('dot')
                     f += 1
 
             elif character == 'r':   #assign black rooks
@@ -221,17 +221,16 @@ def save_buffer(replay_buffer):
     from os.path import isfile, join
     import numpy as np
 
+    # Get an array of file suffixes of .npy files from the current working directory.
     cwd = os.getcwd()
     onlyfiles = [f[13:-4] for f in os.listdir(cwd) if 
     os.path.isfile(os.path.join(cwd, f)) and f[-3:]=='npy']
 
-    indexes_array = np.asarray(onlyfiles)
-
-    file_numbers = indexes_array.astype('int')
-    max_file_index = str(np.max(file_numbers)+1)
-    max_file_index_number = max_file_index.zfill(7)
-    filename = 'replay_buffer' + max_file_index_number
+    # Write the matrix with an incremented file number suffix.
+    filename = 'replay_buffer' + str(np.max(np.asarray(onlyfiles).astype('int'))+1).zfill(7)
     np.save(filename, replay_buffer)
+    
+    # Assign filename with .npy suffix.
     filename = filename + '.npy'
 
     
