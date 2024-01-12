@@ -12,10 +12,13 @@ def play_game(in_board, training=None):
     # Debugging only.
     i_count = 0
     
-    # Initialize the first board position array...
-    board_array = board_to_array(board)
-    # ...and assign it to the replay buffer.
-    replay_buffer = np.expand_dims(board_array, axis=0)
+    if training:
+        # Initialize the first board position array...
+        board_array = board_to_array(board)
+        # ...and assign it to the replay buffer.
+        replay_buffer = np.expand_dims(board_array, axis=0)
+    else:
+        replay_buffer = np.zeros([1]) # empty replay buffer
 
     while not board.is_checkmate() and not board.is_stalemate() and not board.is_insufficient_material() and not board.can_claim_draw() and not board.is_seventyfive_moves() and not board.is_fivefold_repetition():
         #i_count+=1
@@ -28,27 +31,31 @@ def play_game(in_board, training=None):
         next_move = random.choice(all_moves_array)
         board.push_san(next_move)
         
-        # Convert the board to an array...
-        board_array = board_to_array(board)
-        # ...and append it to the Replay Buffer
-        replay_buffer = np.append(replay_buffer, np.expand_dims(board_array, axis=0), axis=0)
+        if training:
+            # Convert the board to an array...
+            board_array = board_to_array(board)
+            # ...and append it to the Replay Buffer
+            replay_buffer = np.append(replay_buffer, np.expand_dims(board_array, axis=0), axis=0)
 
-    # Assign the reward in the Replay Buffer
-    if board_array[8][0][6] == 1:  # 1 if Checkmate
-        if board_array[8][0][1] == 0:
-            reward = -1
+    if training:
+        # Assign the reward in the Replay Buffer
+        if board_array[8][0][6] == 1:  # 1 if Checkmate
+            if board_array[8][0][1] == 0:
+                reward = 1 # White Win
+            else:
+                reward = -1  # Black Win
         else:
-            reward = 1
-    else:
-        reward = 0
-
-    board_array[8][0][8] = reward
-    replay_buffer[1][8][0][8] = reward
+            reward = 3      # Draw
+        
+        board_array[8][0][8] = reward
+        
+        # Just a test line - this needs to be replaced by code to assign the reward to every board in the replay buffer matrix.
+        replay_buffer[1][8][0][8] = reward
 
     
     return board, replay_buffer
 
-def simulate_play(iterations):
+def simulate_play(iterations, training=None):
     
     import time
     import chess
@@ -71,7 +78,7 @@ def simulate_play(iterations):
     start_time = time.time()
 
     for i in range(num_games):
-        out_board, _ = play_game(None)
+        out_board, _ = play_game(None, training)
         moves += out_board.fullmove_number
         if out_board.is_variant_draw() or out_board.can_claim_draw() or out_board.is_insufficient_material() or out_board.is_stalemate() or out_board.is_seventyfive_moves() or out_board.is_fivefold_repetition() :
             num_draws += 1
