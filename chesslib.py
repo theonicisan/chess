@@ -45,7 +45,7 @@ def play_game(in_board, training=None):
             else:
                 reward = -1  # Black Win
         else:
-            reward = 3      # Draw, should be 0 but using 3 just to test - to stand out from default 0
+            reward = 0      # Draw
         
         # I think this is redundant as the reward makes it into the replay buffer.
         # board_array[8][0][8] = reward
