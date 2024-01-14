@@ -197,7 +197,7 @@ def board_to_array(in_board):
 
     # populate the meta rank
 
-    board_array[8][0][0] = board.fullmove_number
+    board_array[8][1][0] = board.fullmove_number
 
     for character in (meta_string):
         if character == 'w':
@@ -228,7 +228,7 @@ def save_buffer(replay_buffer):
     # Get an array of file suffixes of .npy files from the current working directory.
     cwd = os.getcwd()
     onlyfiles = [f[13:-4] for f in os.listdir(cwd) if 
-    os.path.isfile(os.path.join(cwd, f)) and f[-3:]=='npy']
+    os.path.isfile(os.path.join(cwd, f)) and f[:13]=='replay_buffer']
 
     # Write the matrix with an incremented file number suffix.
     filename = 'replay_buffer' + str(np.max(np.asarray(onlyfiles).astype('int'))+1).zfill(7)
@@ -239,3 +239,37 @@ def save_buffer(replay_buffer):
 
     
     return filename
+
+def buffer_to_dict(replay_buffer, dictionary=None):
+    import numpy as np
+
+
+    # Passing a dictionary will overwrite the saved dictionary.  Not passing a dictionary will create / use the saved dictionary.
+    if dictionary is None:
+        dictionary = np.load('dictionary.npy',allow_pickle='TRUE').item()
+    else:
+        dictionary={}
+    
+    dict_key = ''
+    zero_counter = 0
+
+    for move in range(replay_buffer.shape[0]-1):
+        for pos in replay_buffer[move,0:775]:
+            if pos != 0:
+                if zero_counter > 0:
+                    dict_key = dict_key + str(zero_counter)# + '.'
+                    zero_counter = 0
+                dict_key = dict_key + str(pos)# + '.'
+            else:
+                zero_counter += 1
+        zero_counter = 0
+        
+        if dict_key not in dictionary:
+            dictionary[dict_key] = 1
+            dict_key = ''
+        else:
+            dictionary[dict_key] = dictionary[dict_key]+1
+    
+    np.save('dictionary', dictionary) 
+
+    return dictionary
