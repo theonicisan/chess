@@ -237,6 +237,7 @@ def save_buffer(replay_buffer):
     # Assign filename with .npy suffix.
     filename = filename + '.npy'
 
+    _ = buffer_to_dict(replay_buffer)
     
     return filename
 
