@@ -16,7 +16,7 @@ def play_game(in_board, training=None):
         # Initialize the first board position array...
         board_array = board_to_array(board)
         # ...and assign it to the replay buffer.
-        replay_buffer = np.expand_dims(board_array, axis=0)
+        replay_buffer = np.expand_dims(np.ravel(board_array), axis=0)
     else:
         replay_buffer = np.zeros([1]) # empty replay buffer
 
@@ -32,29 +32,33 @@ def play_game(in_board, training=None):
         board.push_san(next_move)
         
         if training:
+            
             # Convert the board to an array...
             board_array = board_to_array(board)
+   
             # ...and append it to the Replay Buffer
-            replay_buffer = np.append(replay_buffer, np.expand_dims(board_array, axis=0), axis=0)
+            replay_buffer = np.append(replay_buffer, np.expand_dims(np.ravel(board_array), axis=0), axis=0)
 
+    
     if training:
-        # Assign the reward in the Replay Buffer
+        # When the game is finished, save the replay buffer.
+        
+
+        # Assign the reward in the board array
         if board_array[8][0][6] == 1:  # 1 if Checkmate
             if board_array[8][0][1] == 0:
                 reward = 1 # White Win
             else:
-                reward = -1  # Black Win
+                reward = -1 # Black Win
         else:
             reward = 0      # Draw
-        
-        # I think this is redundant as the reward makes it into the replay buffer.
-        # board_array[8][0][8] = reward
-        
-        # Assign the reward to every board in the replay buffer matrix.
-        replay_buffer[:,8,0,8] = reward
+         
+        # Assign the reward to the entire buffer...
+        replay_buffer[:,776] = reward
 
-        # And then save the replay buffer.
+        #...then Save the buffer.
         filename = save_buffer(replay_buffer)
+
     else:
         filename = 'None'
 
