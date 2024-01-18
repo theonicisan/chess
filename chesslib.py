@@ -247,7 +247,10 @@ def buffer_to_dict(replay_buffer, dictionary=None):
 
     # Passing a dictionary will overwrite the saved dictionary.  Not passing a dictionary will create / use the saved dictionary.
     if dictionary is None:
-        dictionary = np.load('dictionary.npy',allow_pickle='TRUE').item()
+        try:
+            dictionary = np.load('dictionary.npy',allow_pickle='TRUE').item()
+        except Exception:
+            dictionary={}
     else:
         dictionary={}
     
