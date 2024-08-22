@@ -35,6 +35,10 @@ def play_game(in_board, training=None):
             
             # Convert the board to an array...
             board_array = board_to_array(board)
+
+            # ...drop the board into the dictionary...
+            dict_key = get_dict_key(board)
+            _ = move_to_dict(dict_key, board_array)
    
             # ...and append it to the Replay Buffer
             replay_buffer = np.append(replay_buffer, np.expand_dims(np.ravel(board_array), axis=0), axis=0)
@@ -82,6 +86,7 @@ def simulate_play(iterations, training=None):
     num_games = iterations
     moves = 0
     result = ''
+    report_counter = 0
 
 
     # Simulate games as a kind of Monte-Carlo simulation for games played using random moves.
@@ -89,6 +94,10 @@ def simulate_play(iterations, training=None):
     start_time = time.time()
 
     for i in range(num_games):
+        report_counter += 1
+        if report_counter == 100:
+            print(str(i) + ' of ' + str(num_games) + ' ' + str(i/num_games*100) + '% complete.')
+            report_counter = 0
         out_board, _, _ = play_game(None, training)
         moves += out_board.fullmove_number
         if out_board.is_variant_draw() or out_board.can_claim_draw() or out_board.is_insufficient_material() or out_board.is_stalemate() or out_board.is_seventyfive_moves() or out_board.is_fivefold_repetition() :
@@ -127,7 +136,7 @@ def board_to_array(in_board):
     board = chess.Board()
     board = in_board
 
-    board_string = str(board.outcome)
+    #board_string = str(board.outcome)
     board_string= board.fen()
     end_pos = [pos for pos, char in enumerate(board_string) if char == " "]
     meta_string = board_string[end_pos[0]+1:]
@@ -237,7 +246,7 @@ def save_buffer(replay_buffer):
     # Assign filename with .npy suffix.
     filename = filename + '.npy'
 
-    _ = buffer_to_dict(replay_buffer)
+    # _ = buffer_to_dict(replay_buffer) # Not doing this here at the moment.  Doing it in play_game.
     
     return filename
 
@@ -272,8 +281,37 @@ def buffer_to_dict(replay_buffer, dictionary=None):
             dictionary[dict_key] = 1
             dict_key = ''
         else:
-            dictionary[dict_key] = dictionary[dict_key]+1
+            dictionary[dict_key] = dictionary[dict_key] + 1
     
     np.save('dictionary', dictionary) 
 
     return dictionary
+
+
+def move_to_dict(dict_key, board_array):
+    import numpy as np
+
+    print(dict_key)
+    try:
+        dictionary = np.load('dictionary.npy',allow_pickle='TRUE').item()
+    except Exception:
+        dictionary={}
+
+    if dict_key not in dictionary:
+        dictionary[dict_key] = [1,1] # This is just a placeholder, should be {['key':[reward, visit_count]]}
+    else:
+        base_value = dictionary[dict_key][1]
+        dictionary[dict_key] = [1,base_value + 1]
+    np.save('dictionary', dictionary) 
+
+    return dictionary
+
+def get_dict_key(in_board):
+
+    import chess
+
+    fen_string = in_board.fen()
+    space_pos = [pos for pos, char in enumerate(fen_string) if char == " "]
+    dict_key = fen_string[0:space_pos[2]]
+
+    return dict_key
